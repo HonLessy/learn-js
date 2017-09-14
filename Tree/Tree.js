@@ -99,6 +99,47 @@ function searchData(T,data){
     }
     return null;
 };
+function remove(T,data){
+    root = removeNode(T.root,data);
+};
+function getSmalllest(biNode){
+    if(biNode.lchild === null){
+        return biNode;
+    }else{
+        return getSmalllest(biNode.lchild);
+    }
+};
+function removeNode(biNode,data){
+    if(biNode === null){
+        return null;
+    }
+    if(data === biNode.data){
+        //没有子结点的结点
+        if(biNode.lchild === null && biNode.rchild === null){
+            return null;
+        }
+        //没有左孩子的结点
+        if(biNode.lchild === null){
+            return biNode.rchild;
+        }
+        //没有右孩子的结点
+        if(biNode.rchild === null){
+            return biNode.lchild;
+        }
+        //有2个孩子的结点
+        var temNode = getSmalllest(biNode.rchild);
+        biNode.data = temNode.data;
+        biNode.rchild = removeNode(biNode.rchild,temNode.data);
+        return biNode;
+    }else if(data < biNode.data){
+        biNode.lchild = removeNode(biNode.lchild,data);
+        return biNode;
+    }else{
+        biNode.rchild = removeNode(biNode.rchild,data);
+        return biNode;
+    }
+};
+
 var T = new BiTree();
 T.insert(23);
 T.insert(45);
@@ -121,4 +162,6 @@ console.log(max);
 var DataNode = searchData(T,99);
 console.log(DataNode);
 console.log("*****************************");
+remove(T,16);
+inOrderTraverse(T.root);
 
