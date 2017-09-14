@@ -15,84 +15,124 @@
 > - (3)如果$2i+1 > n$,则结点$i$无右孩子；否则其右孩子RCHILD($i$)是结点$2i+1$
 ### 二叉树的实现
 ```
-function BiNode(data,lchild,rchild){
+function BiNode(data,lchild,rchild) {
     this.data = data;
     this.lchild = lchild;
     this.rchild = rchild;
     this.show = show;
-    function show(){
-        return this.data;
-    };
-};
-function BiTree(){
+}
+
+function show() {
+    return this.data;
+}
+
+function BiTree() {
     this.root = null;
-};
-BiTree.prototype = {
-    insert:function(data){
-        var newNode = new BiNode(data,null,null);
-        //判断是否存在根结点，没有将新结点插入
-        if(this.root === null){
-            this.root = newNode;
-        }else{
-            //查找根结点
-            var current = this.root;
-            var parent;
-            while(true){
-                //将当前结点保存为父节点
-                parent = current;
-                //将小的结点放在左边
-                if(data < current.data){
-                    //获取当前结点的左结点
-                    currrent = current.lchild;
-                    //判断当前结点的左结点是否有数据
-                    if(currrent === null){
-                        //若没有数据将新结点存入当前结点的左结点
-                        parent.lchild = newNode;
-                        break;
-                    }
-                }else{
-                    current = current.rchild;
-                    if(current === null){
-                        //若没有数据将新结点存入当前结点的左结点
-                        parent.rchild = newNode;
-                        break;
-                    }
+    this.insert = insert;
+    this.inOrderTraverse = inOrderTraverse;
+}
+
+function insert(data) {
+    var newNode = new BiNode(data,null,null);
+    if(this.root == null) {
+        this.root = newNode;
+    }else {
+        var current = this.root;
+        var parent;
+        while(current) {
+            parent = current;
+            if(data <  current.data) {
+                current = current.lchild;
+                if(current == null) {
+                    parent.lchild = newNode;
+                    break;
+                }
+            }else {
+                current = current.rchild;
+                if(current == null) {
+                    parent.rchild = newNode;
+                    break;
                 }
             }
         }
-    },
-    searchNode:function(data){
-        var current = this.root;
-        while(current !== null){
-            if(data === current.data){
-                return current;
-            }else if(data < current.data){
-                current = current.lchild;
-            }else{
-                current = current.rchild;
-            }
-        }
-        return null;
-    },
-    preOrderTraverse:function(node){
-        var data = [];
-        _preOrder(node,data);
-        console.log(data);
-        return data;
-    },
-};
-function _preOrder(node,data){
-    if(!(node == null)){
-      data.push(node.show());
-      _preOrder(node.left,data);
-      _preOrder(node.right,data);
+    }
+}
+```
+### 遍历二叉树和线索二叉树
+#### **遍历二叉树**
+##### 在二叉树的一些应用中，常常要求在树中查找具有某种特征的结点，或者对树中全部结点逐一进行某种处理。这就提出了一个遍历二叉树的问题，即如何按照某条搜索路径寻访树中每个结点，使得每个结点均被访问一次，而且仅被访问一次。
+##### 基于二叉树的递归定义，可得下属遍历二叉树的递归算法定义：
+- ##### **先序遍历二叉树的操作定义为**：
+    若二叉树为空，则空操作，否则：
+    1. 访问根结点
+    2. 先序遍历左子树
+    3. 先序遍历右子树
+- ##### **中序遍历二叉树的操作定义为**：
+    若二叉树为空，则空操作，否则：
+    1. 中序遍历左子树
+    2. 访问根结点
+    3. 中序遍历右子树
+- ##### **后序遍历二叉树的操作定义为**：
+    若二叉树为空，则空操作，否则：
+    1. 后序遍历左子树
+    2. 后序遍历右子树
+    3. 访问根结点
+##### 遍历实现
+```
+//先序遍历
+function preOrderTraverse(node){
+    if(!(node === null)){
+        console.log(node.show());
+        preOrderTraverse(node.lchild);
+        preOrderTraverse(node.rchild);
     }
 };
-
-var T = new BiTree();
-T.insert('A');
-T.insert('B');
-T.insert('C');
-T.preOrderTraverse();
-
+// 中序遍历
+function inOrderTraverse(node) {
+    if(!(node == null)) {
+        inOrderTraverse(node.lchild);
+        console.log(node.show());
+        inOrderTraverse(node.rchild);
+    }
+};
+//后序遍历
+function postOrderTraverse(node){
+    if(!(node === null)){
+        postOrderTraverse(node.lchild);
+        postOrderTraverse(node.rchild);
+        console.log(node.show());
+    }
+};
+//查找最小值
+function GetMin(T){
+    var current = T.root;
+    //因为较小的值总是在左子树上
+    while(!(current.lchild === null)){
+        current = current.lchild;
+    }
+    return current.data;
+};
+//查找最大值
+function GetMax(T){
+    var current = T.root;
+    while(!(current.rchild === null)){
+        current = current.rchild;
+    }
+    return current.data;
+};
+//查找给定值
+function searchData(T,data){
+    //先比较该值和当前结点的值的大小
+    var current = T.root;
+    while(!(current === null)){
+        if(current.data === data){
+            return current;
+        }else if(data < current.lchild){
+            current = current.lchild;
+        }else{
+            current = current.rchild;
+        };
+    }
+    return null;
+};
 ```
